@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sizzzling Slice Pizzeria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-[#311311] flex flex-col items-center justify-center">
+    <div>
+      <a
+        href="{{ url_for('home')}}"
+        class="btn fixed top-0 left-0 m-8 bg-yellow-100 border-2 border-yellow-400 hover:bg-yellow-300 rounded-lg mt-10 p-2"
+        >Home</a
+      >
+      <a
+        href="{{ url_for('logout')}}"
+        class="btn fixed top-0 right-0 m-8 bg-yellow-100 border-2 border-yellow-400 hover:bg-yellow-300 rounded-lg mt-10 p-2"
+        >Logout</a
+      >
+      <img src="../static/images/logo.jpg" class="h-60 w-auto" />
+      <hr class="w-3/4 border-2 rounded-lg border-yellow-400 m-2" />
+    </div>
+    <h1 class="text-2xl text-yellow-100">Start your order here:</h1>
+    <form action="{{ url_for('pizza') }}" , method="post">
+      <div>
+        {{ form.crust.label(class="text-xl text-yellow-100") }} {{
+        form.crust(class="bg-yellow-200 border-2 rounded-lg") }} <br />
+        {{form.type.label(class="text-xl text-yellow-100") }}
+        {{form.type(class="bg-yellow-200 border-2 rounded-lg") }}<br />
+        {{form.size.label(class="text-xl text-yellow-100") }}
+        {{form.size(class="bg-yellow-200 border-2 rounded-lg") }} <br />
+        {{form.quantity.label(class="text-xl text-yellow-100") }}
+        {{form.quantity(class="bg-yellow-200 border-2 rounded-lg") }}<br />
+        {{form.price_per.label(class="text-xl text-yellow-100") }}
+        {{form.price_per(class="bg-yellow-200 border-2 rounded-lg") }} <br />
+        {{form.order_date.label(class="text-xl text-yellow-100") }}
+        {{form.order_date(class="bg-yellow-200 border-2 rounded-lg") }} <br />
+        {{ form.submit(class="btn justify-center bg-yellow-100 border-2
+        border-yellow-400 hover:bg-yellow-300 hover:cursor rounded-lg mt-8 p-2")
+        }}
+      </div>
+    </form>
+  </body>
+</html>

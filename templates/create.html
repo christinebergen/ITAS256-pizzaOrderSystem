@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create new user</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-[#311311] flex flex-col items-center justify-center">
+    <div>
+      <img src="../static/images/logo.jpg" class="h-60 w-auto" />
+    </div>
+    <h1 class="text-2xl text-yellow-100">Create New User</h1>
+    <div>
+      <form action="/create" , method="post" class="ml-12">
+        <div>
+          {{ form.email.label(class="text-xl text-yellow-100") }}: {{
+          form.email(class="bg-yellow-200 border-2 rounded-lg") }} <br />
+          {{form.password.label(class="text-xl text-yellow-100") }}:
+          {{form.password(class="bg-yellow-200 border-2 rounded-lg") }}<br />
+          {{form.verifyPassword.label(class="text-xl text-yellow-100") }}:
+          {{form.verifyPassword(class="bg-yellow-200 border-2 rounded-lg") }}
+          <br />
+          {{form.role(class="text-xl text-yellow-100") }} <br />
+          {{ form.submit(class="btn justify-center bg-yellow-100 border-2
+          border-yellow-400 hover:bg-yellow-300 hover:cursor rounded-lg mt-8
+          p-2") }}
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

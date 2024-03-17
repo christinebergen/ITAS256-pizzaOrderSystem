@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sizzzling Slice Pizzeria</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-[#311311] flex flex-col items-center justify-center">
+    <div>
+      <a
+        href="{{ url_for('logout')}}"
+        class="btn fixed top-0 right-0 m-8 bg-yellow-100 border-2 border-yellow-400 hover:bg-yellow-300 rounded-lg mt-10 p-2"
+        >Logout</a
+      >
+      <img src="../static/images/logo.jpg" class="h-60 w-auto" />
+    </div>
+    <h1 class="text-2xl text-yellow-100">Recent Pizza Orders</h1>
+    <hr class="w-3/4 border-2 rounded-lg border-yellow-400 m-2" />
+    <ul class="grid grid-cols-2">
+      {% for order in orders %}
+
+      <li class="text-yellow-100 bg-orange-900 text-lg m-4 p-2 rounded-lg">
+        Order Date: {{ order.order_date }}<br />
+        Type: {{ order.type }}<br />
+        Crust: {{ order.crust }}<br />
+        Size: {{ order.size }}<br />
+        Quantity: {{ order.quantity }}<br />
+        Price Per Pizza: ${{ '%.2f'|format(order.price_per) }}<br />
+        Subtotal: ${{ '%.2f'|format(order.subtotal) }}<br />
+        10% Delivery Fee: ${{ '%.2f'|format(order.delivery_fee) }} <br />
+        Total: ${{ '%.2f'|format(order.total) }} <br />
+      </li>
+
+      {% endfor %}
+    </ul>
+
+    <a
+      href="{{ url_for('pizza') }}"
+      class="btn bg-yellow-100 border-2 border-yellow-400 hover:bg-yellow-300 rounded-lg mt-10 p-2"
+      >Place an Order</a
+    >
+  </body>
+</html>
