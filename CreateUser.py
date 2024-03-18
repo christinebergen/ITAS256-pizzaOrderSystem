@@ -1,6 +1,6 @@
 from flask_wtf import Form
-from wtforms import StringField, IntegerField, TextAreaField, SubmitField, RadioField, SelectField
-from wtforms import validators, ValidationError
+from wtforms import StringField,SubmitField, RadioField
+from wtforms import validators
 
 class CreateUser(Form):
     email = StringField("Email",[validators.Email("Please enter a valid email address.")])

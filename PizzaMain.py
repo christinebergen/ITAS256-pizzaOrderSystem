@@ -1,7 +1,12 @@
+## ITAS 256 Assignment 2
+## Christine Bergen
+## A pizza ordering web app written in Python using Flask and WTForms
+## ChatGPT-4 was used for trouble shooting and logo design
+
 from flask import Flask, request, render_template, redirect, url_for, session, abort, flash
 from functools import wraps
 import json 
-from datetime import date
+from datetime import date, datetime
 from CreateUser import CreateUser
 from PizzaOrder import PizzaOrder
 from email_validator import validate_email, EmailNotValidError
@@ -28,7 +33,7 @@ def load_users():
         with open(users_file, 'r') as fd:
             return json.load(fd)
     except (FileNotFoundError, json.JSONDecodeError):
-        return []  # Returns an empty list if the file is not found or if it's empty/incorrectly formatted
+        return []  # returns an empty list if the file is not found or if it's empty/incorrectly formatted
     
 # write users to users.json
 def save_users(users):
@@ -36,7 +41,6 @@ def save_users(users):
         json.dump(users, fd)
 
 current_info = load_users()
-print(current_info)
 
 pizza_orders = "./data/pizzaorders.json"
 
@@ -49,12 +53,12 @@ def load_pizzas():
         return[]
 
 # write pizza orders to pizzaorders.json    
-def save_pizzas(pizzas):
-    with open(pizza_orders, 'w') as fd:
-        json.dump(pizzas, fd)
+def save_pizzas(orders):
+    with open(pizza_orders, 'w') as file:
+        json.dump(orders, file, indent=4)
 
 current_pizza_orders = load_pizzas()
-print(current_pizza_orders)            
+           
 
 # check if users are logged in
 def check_login(email, password):
@@ -69,6 +73,12 @@ def check_login(email, password):
 @login_required
 def home():
     orders = load_pizzas()
+
+    # format date and sort with most recent at top
+    for order in orders:
+        order['order_date_obj'] = datetime.strptime(order['order_date'], '%Y-%m-%d')
+    orders.sort(key=lambda x: x['order_date_obj'], reverse=True)
+
     return render_template('home.html', orders=orders)
 
 # route for login and will set session variables upon login
@@ -164,6 +174,7 @@ def pizza():
             # append new order to pizzaorders.json
             current_pizza_orders.append(new_order)
             save_pizzas(current_pizza_orders)
+            flash("Thank you for your order! We will start working on it right away!", "success")
 
             return redirect(url_for('home'))
 
@@ -173,6 +184,50 @@ def pizza():
 
     # handle GET request
     return render_template('pizza.html', form=form)
+# this function not working properly, it loads the order but then saves a new order instead of writing over
+@app.route('/update/<int:order_id>', methods=['GET','POST'])
+def update(order_id):
+    orders = load_pizzas()  # Load existing orders
+    order_index = next((i for i, order in enumerate(orders) if order['id'] == order_id), None)
+    
+    if order_index is None:
+        flash("Order not found", "error")
+        return redirect(url_for('home'))
+    
+    form = PizzaOrder(request.form)
+    if request.method == 'POST' and form.validate():
+        # directly update the order in the orders list
+        orders[order_index]['crust'] = form.crust.data
+        orders[order_index]['type'] = form.type.data
+        orders[order_index]['size'] = form.size.data
+        orders[order_index]['quantity'] = form.quantity.data
+        orders[order_index]['price_per'] = form.price_per.data
+
+        order_date = form.order_date.data
+        if isinstance(order_date, date):
+            orders[order_index]['order_date'] = order_date.isoformat()
+
+        save_pizzas(orders)
+        flash("Order updated successfully", "success")
+        return redirect(url_for('home'))
+    elif request.method == 'GET':
+        if order_index is not None:
+            if isinstance(orders[order_index]['order_date'], str):
+                orders[order_index]['order_date'] = datetime.strptime(orders[order_index]['order_date'], '%Y-%m-%d')
+            # prepopulate the form if it's a GET request
+            form.process(data=orders[order_index])
+
+    return render_template('pizza.html', form=form, update=True, order_id=order_id)
+
+@app.route('/delete/<int:order_id>', methods=['POST'])
+def delete(order_id):
+    orders = load_pizzas()  # Load existing orders
+    orders = [order for order in orders if order['id'] != order_id]
+
+    # save updated orders
+    save_pizzas(orders)
+    flash("Order deleted successfully", "success")
+    return redirect(url_for('home'))
 
 # logout and remove session variables
 @app.route('/logout')
